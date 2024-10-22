@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Play } from "lucide-react";
+import { Play, Maximize } from "lucide-react";
 
 const CLAVE_SECRETA = "abretesesamo"; // Cambia esto a la clave secreta que desees
 const RUTA_FICTICIA = "C:\\DonCarlos> ";
@@ -12,18 +12,45 @@ export default function TerminalSecreta() {
   const [claveCorrecta, setClaveCorrecta] = useState(false);
   const inputRef = useRef(null);
   const audioRef = useRef(null);
+  const [pantallaCompleta, setPantallaCompleta] = useState(false);
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [mensajes]);
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement && pantallaCompleta) {
+        document.documentElement.requestFullscreen().catch((e) => {
+          console.error(
+            `Error al intentar entrar en pantalla completa: ${e.message}`
+          );
+        });
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [pantallaCompleta]);
 
   const reproducirAudio = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play();
     }
+  };
+
+  const entrarPantallaCompleta = () => {
+    document.documentElement
+      .requestFullscreen()
+      .then(() => {
+        setPantallaCompleta(true);
+      })
+      .catch((e) => {
+        console.error(
+          `Error al intentar entrar en pantalla completa: ${e.message}`
+        );
+      });
   };
 
   const handleSubmit = (e) => {
@@ -39,6 +66,18 @@ export default function TerminalSecreta() {
     } else if (claveCorrecta && input.toLowerCase() === "play") {
       setMensajes((prev) => [...prev, input, "Reproduciendo audio..."]);
       reproducirAudio();
+    } else if (
+      claveCorrecta &&
+      input.toLowerCase() === "close" &&
+      pantallaCompleta
+    ) {
+      document.exitFullscreen();
+      setPantallaCompleta(false);
+      setMensajes((prev) => [
+        ...prev,
+        input,
+        "Saliendo de pantalla completa...",
+      ]);
     } else if (!claveCorrecta) {
       setMensajes((prev) => [
         ...prev,
@@ -91,6 +130,15 @@ export default function TerminalSecreta() {
             className="ml-2 text-white hover:text-green-500 focus:outline-none"
           >
             <Play size={20} />
+          </button>
+        )}
+        {!pantallaCompleta && (
+          <button
+            type="button"
+            onClick={entrarPantallaCompleta}
+            className="ml-2 text-white hover:text-green-500 focus:outline-none"
+          >
+            <Maximize size={20} />
           </button>
         )}
       </form>
