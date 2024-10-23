@@ -142,10 +142,7 @@ export default function TerminalSecreta() {
           </button>
         )}
       </form>
-      <audio
-        ref={audioRef}
-        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/distorted_audio-vB9TR6x3ZzbUu4FErh0YsaHQgcHZdl.mp3"
-      />
+      <audio ref={audioRef} src="/distorted_1.mp3" />
     </div>
   );
 }
