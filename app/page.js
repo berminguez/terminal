@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Play, Maximize } from "lucide-react";
 
-const CLAVE_SECRETA = "abretesesamo"; // Cambia esto a la clave secreta que desees
+const CLAVE_SECRETA = "dinero";
 const RUTA_FICTICIA = "C:\\DonCarlos> ";
 
 export default function TerminalSecreta() {
